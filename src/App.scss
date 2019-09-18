@@ -1,0 +1,32 @@
+@import "./styles/reset";
+.progressbar-holder {
+  max-width: 300px;
+  margin: 0 auto;
+}
+.progress {
+  height: 1.5em;
+  width: 100%;
+  background-color: #c9c9c9;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 10px;
+  &.add {
+    .value {
+      background-color: red;
+    }
+  }
+  &:before {
+    content: attr(data-label);
+    font-size: 0.8em;
+    position: absolute;
+    text-align: center;
+    top: 5px;
+    left: 0;
+    right: 0;
+  }
+  .value {
+    background-color: #7cc4ff;
+    display: inline-block;
+    height: 100%;
+  }
+}
