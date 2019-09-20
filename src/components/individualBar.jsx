@@ -6,7 +6,9 @@ const IndividualBar = ({ bar, additionalClass }) => {
       className={additionalClass ? "progress add" : "progress"}
       data-label={`${bar}%`}
     >
-      <span className="value" style={{ width: `${bar}%` }}></span>
+      <span className="value" style={{ width: `${bar}%` }}>
+        {additionalClass}
+      </span>
     </div>
   );
 };

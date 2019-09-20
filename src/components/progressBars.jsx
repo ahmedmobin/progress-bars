@@ -12,43 +12,58 @@ class ProgressBars extends Component {
       buttons: [],
       limit: "",
       barOptionSelected: "0",
-      barAdditionalClass: false
+      barAdditionalClass: [],
+      isLoading: true
     };
   }
-  componentDidMount() {
+  async componentDidMount() {
     const apiEndpointUrl = config.apiEndpoint;
-    axios
-      .get(apiEndpointUrl)
-      .then(res =>
-        this.setState({
-          bars: res.data.bars,
-          buttons: res.data.buttons,
-          limit: res.data.limit
-        })
-      )
-      .catch(error => console.log(error));
+
+    try {
+      const res = await axios.get(apiEndpointUrl);
+
+      let barAdditionalClass = [];
+      for (let index = 0; index < res.data.bars.length; index++) {
+        if (
+          res.data.bars[index] > 100 &&
+          res.data.bars[index] < res.data.limit
+        ) {
+          barAdditionalClass.push(true);
+        } else if (res.data.bars[index] < 100) {
+          barAdditionalClass.push(false);
+        }
+      }
+
+      this.setState({
+        bars: res.data.bars,
+        buttons: res.data.buttons,
+        limit: res.data.limit,
+        barAdditionalClass: barAdditionalClass,
+        isLoading: false
+      });
+    } catch (error) {
+      console.log(error);
+      this.setState({ isLoading: false });
+    }
   }
-  handleProgressBarConditions = total => {
-    //console.log("condintion", total);
-  };
   handleProgressBar = button => {
     const { limit, barOptionSelected } = this.state;
 
     const bars = [...this.state.bars];
+    const barAdditionalClass = [...this.state.barAdditionalClass];
     const index = barOptionSelected;
     const total = (bars[index] += button);
-    this.handleProgressBarConditions(total);
     if (total < 0) {
       bars[index] = 0;
     } else if (total > limit) {
       bars[index] = limit;
-      console.log("limit is reached");
-    } else if (total > 100 && total < limit) {
-      this.setState({ barAdditionalClass: true });
-    } else if (total < 100) {
-      this.setState({ barAdditionalClass: false });
     }
-    this.setState({ bars });
+    if (total > 100 && total < limit) {
+      barAdditionalClass[index] = true;
+    } else if (total < 100) {
+      barAdditionalClass[index] = false;
+    }
+    this.setState({ bars, barAdditionalClass });
   };
   handleSelectChange = event => {
     this.setState({
@@ -57,33 +72,38 @@ class ProgressBars extends Component {
   };
   render() {
     const barsCount = _.range(0, this.state.bars.length);
-    const { limit, barAdditionalClass } = this.state;
-    //console.log("additional", barAdditionalClass);
+    const { barAdditionalClass, bars } = this.state;
     return (
       <div>
-        <h1>Progress Bars Demos {limit}</h1>
-        {this.state.bars.map((bar, index) => (
-          <IndividualBar
-            additionalClass={barAdditionalClass}
-            key={index}
-            bar={bar}
-          />
-        ))}
+        {bars.length ? (
+          <div className="holder">
+            <h1>Progress Bars</h1>
+            {bars.map((bar, index) => (
+              <IndividualBar
+                additionalClass={barAdditionalClass[index]}
+                key={index}
+                bar={bar}
+              />
+            ))}
 
-        <select onClick={this.handleSelectChange}>
-          {barsCount.map((count, index) => (
-            <option key={index} value={count}>
-              Progress bar{count + 1}
-            </option>
-          ))}
-        </select>
-        {this.state.buttons.map(button => (
-          <CountChangeButton
-            key={button}
-            button={button}
-            onChangeProgressBar={() => this.handleProgressBar(button)}
-          />
-        ))}
+            <select onClick={this.handleSelectChange}>
+              {barsCount.map((count, index) => (
+                <option key={index} value={count}>
+                  Progress bar{count + 1}
+                </option>
+              ))}
+            </select>
+            {this.state.buttons.map(value => (
+              <CountChangeButton
+                key={value}
+                button={value}
+                onChangeProgressBar={() => this.handleProgressBar(value)}
+              />
+            ))}
+          </div>
+        ) : (
+          "Loading..."
+        )}
       </div>
     );
   }

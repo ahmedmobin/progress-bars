@@ -1,18 +1,43 @@
+@import url("https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap");
 @import "./styles/reset";
+body {
+  background: #f2f2f2;
+  position: relative;
+  font-family: "Roboto", sans-serif;
+}
 .progressbar-holder {
-  max-width: 300px;
-  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  .holder {
+    max-width: 400px;
+    background: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    border: 1px solid #eee;
+    box-shadow: 0 0 9px rgba(170, 170, 170, 0.5);
+    h1 {
+      font-size: 24px;
+      line-height: 1.4em;
+      margin: 0 0 10px;
+      text-align: center;
+      font-weight: 700;
+    }
+  }
 }
 .progress {
-  height: 1.5em;
+  height: 30px;
+  line-height: 30px;
   width: 100%;
-  background-color: #c9c9c9;
+  background-color: #d8d8d8;
   position: relative;
   overflow: hidden;
   margin-bottom: 10px;
+  border-radius: 20px;
   &.add {
     .value {
-      background-color: red;
+      background: red;
     }
   }
   &:before {
@@ -20,13 +45,27 @@
     font-size: 0.8em;
     position: absolute;
     text-align: center;
-    top: 5px;
+    top: 0;
     left: 0;
     right: 0;
   }
   .value {
-    background-color: #7cc4ff;
+    background: #11998e; /* fallback for old browsers */
+    background: -webkit-linear-gradient(
+      to right,
+      #11998e,
+      #38ef7d
+    ); /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(
+      to right,
+      #11998e,
+      #38ef7d
+    ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
     display: inline-block;
     height: 100%;
+    -webkit-transition: width 1s; /* For Safari 3.1 to 6.0 */
+    transition: width 1s;
+    border-radius: 20px;
   }
 }
